@@ -13,7 +13,6 @@ export default function Home() {
       </Head>
       <Header />
       <LotteryEntrance />
-      <main>Hello!</main>
     </div>
   );
 }
