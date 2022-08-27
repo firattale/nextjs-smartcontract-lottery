@@ -2,7 +2,8 @@ import { useMoralis, useWeb3Contract } from "react-moralis";
 import { abi, contractAddresses } from "../constants";
 import React from "react";
 import { ethers } from "ethers";
-import { useNotification } from "web3uikit";
+import { useNotification } from "@web3uikit/core";
+import { Bell } from "@web3uikit/icons";
 
 export default function LotteryEntrance() {
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
@@ -55,10 +56,11 @@ export default function LotteryEntrance() {
       message: "Transaction complete!",
       title: "Tx Notification",
       position: "topR",
-      icon: "bell",
+      icon: <Bell fontSize="50px" />,
     });
   };
   const handleSuccess = async (tx) => {
+    // onSuccess only checks if the tx successfully transmitted to Metamask that's why we wait 1 confirmation
     await tx.wait(1);
     handleNewNotification(tx);
     updateUI();
