@@ -9,6 +9,8 @@ export default function LotteryEntrance() {
   const chainId = parseInt(chainIdHex);
   const raffleAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
   const [entranceFee, setEntranceFee] = React.useState("0");
+  const [numberOfPlayers, setNumberOfPlayers] = React.useState("0");
+  const [recentWinner, setRecentWinner] = React.useState("0");
   const dispatch = useNotification();
 
   const { runContractFunction: enterRaffle } = useWeb3Contract({
@@ -22,9 +24,23 @@ export default function LotteryEntrance() {
     contractAddress: raffleAddress,
     functionName: "getEntranceFee",
   });
+  const { runContractFunction: getNumberOfPlayers } = useWeb3Contract({
+    abi,
+    contractAddress: raffleAddress,
+    functionName: "getNumberOfPlayers",
+  });
+  const { runContractFunction: getRecentWinner } = useWeb3Contract({
+    abi,
+    contractAddress: raffleAddress,
+    functionName: "getRecentWinner",
+  });
   async function updateUI() {
     const entranceFeeFromCall = (await getEntranceFee()).toString();
+    const numberOfPlayersFromCall = (await getNumberOfPlayers()).toString();
+    const recentWinnerFromCall = await getRecentWinner();
     setEntranceFee(entranceFeeFromCall);
+    setNumberOfPlayers(numberOfPlayersFromCall);
+    setRecentWinner(recentWinnerFromCall);
   }
 
   React.useEffect(() => {
@@ -45,6 +61,7 @@ export default function LotteryEntrance() {
   const handleSuccess = async (tx) => {
     await tx.wait(1);
     handleNewNotification(tx);
+    updateUI();
   };
 
   return (
@@ -59,8 +76,8 @@ export default function LotteryEntrance() {
             Enter Raffle
           </button>
           <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
-          <div>The current number of players is: {"numberOfPlayers"}</div>
-          <div>The most previous winner was: {"recentWinner"}</div>
+          <div>The current number of players is: {numberOfPlayers}</div>
+          <div>The most previous winner was: {recentWinner}</div>
         </>
       ) : (
         <div>Please connect to a supported chain Rinkeby or Hardhat Local </div>
