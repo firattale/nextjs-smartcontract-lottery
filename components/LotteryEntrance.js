@@ -14,7 +14,11 @@ export default function LotteryEntrance() {
   const [recentWinner, setRecentWinner] = React.useState("0");
   const dispatch = useNotification();
 
-  const { runContractFunction: enterRaffle } = useWeb3Contract({
+  const {
+    runContractFunction: enterRaffle,
+    isLoading,
+    isFetching,
+  } = useWeb3Contract({
     abi,
     contractAddress: raffleAddress,
     functionName: "enterRaffle",
@@ -67,15 +71,21 @@ export default function LotteryEntrance() {
   };
 
   return (
-    <>
+    <div className="p-5">
       {raffleAddress ? (
         <>
           <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
             onClick={async function () {
               await enterRaffle({ onSuccess: handleSuccess, onError: (err) => console.warn(err) });
             }}
+            disabled={isLoading || isFetching}
           >
-            Enter Raffle
+            {isLoading || isFetching ? (
+              <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div>
+            ) : (
+              <div>Enter Raffle</div>
+            )}
           </button>
           <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
           <div>The current number of players is: {numberOfPlayers}</div>
@@ -84,6 +94,6 @@ export default function LotteryEntrance() {
       ) : (
         <div>Please connect to a supported chain Rinkeby or Hardhat Local </div>
       )}
-    </>
+    </div>
   );
 }
