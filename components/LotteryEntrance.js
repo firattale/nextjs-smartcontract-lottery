@@ -75,7 +75,7 @@ export default function LotteryEntrance() {
       {raffleAddress ? (
         <>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto mb-2"
             onClick={async function () {
               await enterRaffle({ onSuccess: handleSuccess, onError: (err) => console.warn(err) });
             }}
